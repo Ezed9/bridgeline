@@ -32,10 +32,9 @@ htmlcov/
 # Ruff
 .ruff_cache/
 
-# ChromaDB (ephemeral, but just in case)
-chroma_data/
-
-# Bouncer audit logs are in ~/.bouncer/, not here
+# Run artifacts (traces, audit logs, crawled pages)
+work/
+.crawlgate/
 
 # uv
 uv.lock
