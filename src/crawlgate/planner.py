@@ -8,6 +8,7 @@ a type error rather than a code-review question.
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from typing import Protocol
 from urllib.parse import urlsplit
 
@@ -16,6 +17,7 @@ from .types import CrawlScope, Plan, SlotRef, Step, ToolSpec, Trusted
 _URL = re.compile(r"https?://[^\s\"'<>)\]]+", re.IGNORECASE)
 _DEPTH = re.compile(r"(\d+)\s*(?:levels?|deep|depth)", re.IGNORECASE)
 _WRITE_TO = re.compile(r"(?:write|save|put|store)\b[^.]{0,60}?\b(?:to|into|in)\s+(\S+)", re.I)
+_FOLLOW = re.compile(r"follow\s+(?:the\s+)?(?:first\s+)?([\w\s-]{1,30}?)\s*link", re.IGNORECASE)
 
 
 class Planner(Protocol):
@@ -68,12 +70,36 @@ class DeterministicPlanner:
 
         steps: list[Step] = [
             Step(tool="fetch", args={"url": seed}, scope=scope, out="pages"),
+        ]
+
+        # "follow the changelog link and summarize it" -- the destination is
+        # chosen by page content, i.e. capsep category iii-b. The plan CAN
+        # express it; the sink gate is what refuses it at run time. Emitting the
+        # shape honestly is what makes the structural cost measurable instead of
+        # merely asserted.
+        follow = _FOLLOW.search(text)
+        if follow:
+            steps.append(
+                Step(
+                    tool="extract",
+                    args={"from": SlotRef("pages"),
+                          "query": f"the {follow.group(1).strip()} link url",
+                          "schema": "url"},
+                    out="target",
+                )
+            )
+            steps.append(
+                Step(tool="fetch", args={"url": SlotRef("target")},
+                     scope=replace(scope, path_prefix="/"), out="pages")
+            )
+
+        steps.append(
             Step(
                 tool="extract",
                 args={"from": SlotRef("pages"), "query": text, "schema": "string"},
                 out="summary",
-            ),
-        ]
+            )
+        )
 
         write_match = _WRITE_TO.search(text)
         if write_match:
