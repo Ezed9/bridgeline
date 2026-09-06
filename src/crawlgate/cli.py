@@ -8,6 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 from uuid import uuid4
 
+from dotenv import load_dotenv
 from rich.console import Console
 
 from . import __version__, models, plan_io
@@ -58,6 +59,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Keys come from the environment, or from a .env found by walking up from
+    # the working directory. A real environment variable always wins, so a
+    # stale .env can never silently override an explicit export.
+    load_dotenv(override=False)
     args = build_parser().parse_args(argv)
     if not args.instruction and not args.plan:
         raise SystemExit("give an instruction or --plan")
