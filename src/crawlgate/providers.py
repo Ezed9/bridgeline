@@ -17,19 +17,64 @@ from .types import Plan, ToolSpec, Trusted
 _PLANNER_SYSTEM = """\
 You emit a crawl plan as JSON. You never execute anything.
 
-Tools: fetch(url) [requires a `scope`], extract(from,query,schema),
-write_file(path,content), report(summary).
+Reply with EXACTLY this envelope and nothing else:
 
-Rules you must satisfy or the plan is rejected:
-- Every destination is a literal: fetch's seed url, every field of scope, and
-  write_file's path. Never a {"$slot": ...} reference.
-- A {"$slot": name} reference may appear ONLY in a content position:
-  extract.from, write_file.content, report.summary.
-- Every fetch step declares a scope: allowed_hosts, path_prefix,
-  allowed_schemes, allowed_ports, max_depth, max_pages.
-- extract.schema is one of: string, bool, int, url, enum[a,b,c].
+{
+  "rationale": "one line",
+  "steps": [ ... ]
+}
 
-Reply with JSON only.
+Every step is an object with "tool" and "args". Optional: "out" (names a slot
+this step's output fills), "when" (a slot that must be truthy), and "scope"
+(REQUIRED on fetch, forbidden elsewhere).
+
+A complete worked example:
+
+{
+  "rationale": "scope-confined crawl, one typed extraction, one fixed write",
+  "steps": [
+    {
+      "tool": "fetch",
+      "args": {"url": "https://docs.example.com/docs/install"},
+      "scope": {
+        "allowed_hosts": ["docs.example.com"],
+        "path_prefix": "/docs",
+        "allowed_schemes": ["https"],
+        "allowed_ports": [443],
+        "max_depth": 2,
+        "max_pages": 8
+      },
+      "out": "pages"
+    },
+    {
+      "tool": "extract",
+      "args": {"from": {"$slot": "pages"}, "query": "the system requirements",
+               "schema": "string"},
+      "out": "requirements"
+    },
+    {
+      "tool": "write_file",
+      "args": {"path": "requirements.md", "content": {"$slot": "requirements"}}
+    },
+    {"tool": "report", "args": {"summary": {"$slot": "requirements"}}}
+  ]
+}
+
+Shape rules, each of which rejects the plan if broken:
+- Top level is an OBJECT with "steps". Not a bare array.
+- Arguments go inside "args". Never at the top level of a step.
+- "out" names an output slot. Not "result", not "id".
+- "path_prefix" is a single string, not a list.
+- "schema" is required on extract: string, bool, int, url, or enum[a,b,c].
+
+Authority rules, which are the point of the format:
+- Every DESTINATION is a literal you write now: fetch's url, every field of
+  scope, and write_file's path. NEVER a {"$slot": ...} reference.
+- A {"$slot": name} may appear ONLY in a content position: extract's "from",
+  write_file's "content", report's "summary".
+- A slot must be filled by an earlier step's "out" before it is referenced.
+
+Reply with JSON only. No prose, no code fences.
 """
 
 _EXTRACTOR_SYSTEM = """\
@@ -63,7 +108,7 @@ class AnthropicPlanner:
             messages=[{"role": "user", "content": str(instruction)}],
         )
         text = "".join(b.text for b in message.content if b.type == "text")
-        return plan_io.parse(_first_json_object(text))
+        return plan_io.parse(_first_json_value(text))
 
 
 class AnthropicExtractor:
@@ -105,7 +150,7 @@ class GeminiPlanner:
                 response_mime_type="application/json",
             ),
         )
-        return plan_io.parse(_first_json_object(response.text or ""))
+        return plan_io.parse(_first_json_value(response.text or ""))
 
 
 class GeminiExtractor:
@@ -134,9 +179,25 @@ def _google_key() -> str:
     return key
 
 
-def _first_json_object(text: str) -> object:
-    start = text.find("{")
-    end = text.rfind("}")
-    if start < 0 or end <= start:
-        raise plan_io.PlanError("planner returned no JSON object")
-    return json.loads(text[start : end + 1])
+def _first_json_value(text: str) -> object:
+    """Pull the plan out of a model reply, tolerating the two shapes models
+    actually produce: the documented envelope, and a bare array of steps.
+
+    A bare array is accepted and wrapped rather than rejected -- leniency at the
+    boundary costs nothing, because `plan_io.parse` still validates every
+    structural rule afterwards. Being strict here would only reject plans whose
+    CONTENT was correct.
+    """
+    body = text.strip()
+    if body.startswith("```"):
+        body = body.split("```")[1] if "```" in body[3:] else body[3:]
+        body = body.removeprefix("json").strip()
+    for opener, closer in (("{", "}"), ("[", "]")):
+        start, end = body.find(opener), body.rfind(closer)
+        if 0 <= start < end:
+            try:
+                value = json.loads(body[start : end + 1])
+            except json.JSONDecodeError:
+                continue
+            return {"steps": value} if isinstance(value, list) else value
+    raise plan_io.PlanError("planner returned no JSON object")
