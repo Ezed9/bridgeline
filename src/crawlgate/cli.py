@@ -91,6 +91,8 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.instruction:
             session.task_note(err, instruction)
+            session.models_note(err, tiers.planner_profile, tiers.extractor_profile,
+                                tiers.note)
             session.planner_input_note(err, instruction)
         trace.rule()
 

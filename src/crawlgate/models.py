@@ -19,6 +19,7 @@ The ladder degrades honestly:
 
 from __future__ import annotations
 
+import importlib.util
 import os
 from dataclasses import dataclass
 
@@ -33,6 +34,35 @@ PROFILE_GEMINI = "gemini"
 _ANTHROPIC_MODEL = "claude-sonnet-5"
 _GEMINI_MODEL = "gemini-2.5-flash"
 
+# A key is not a usable provider. Selecting a profile whose SDK is absent
+# produces an ImportError halfway through a run, which is the worst possible
+# place to discover it.
+_SDK: dict[str, str] = {
+    PROFILE_ANTHROPIC: "anthropic",
+    PROFILE_GEMINI: "google.genai",
+}
+_INSTALL_HINT: dict[str, str] = {
+    PROFILE_ANTHROPIC: "uv sync --extra anthropic",
+    PROFILE_GEMINI: "uv sync --extra gemini",
+}
+
+
+def sdk_installed(profile: str) -> bool:
+    module = _SDK.get(profile)
+    if module is None:
+        return True
+    try:
+        return importlib.util.find_spec(module) is not None
+    except (ImportError, ValueError):
+        return False
+
+
+def _require_sdk(profile: str) -> None:
+    if not sdk_installed(profile):
+        raise RuntimeError(
+            f"the {profile!r} profile needs its SDK: {_INSTALL_HINT[profile]}"
+        )
+
 
 @dataclass(frozen=True)
 class Tiers:
@@ -41,6 +71,7 @@ class Tiers:
     note: str
 
     def planner(self) -> Planner:
+        _require_sdk(self.planner_profile)
         if self.planner_profile == PROFILE_ANTHROPIC:
             from .providers import AnthropicPlanner
 
@@ -52,6 +83,7 @@ class Tiers:
         return DeterministicPlanner()
 
     def extractor(self) -> Extractor:
+        _require_sdk(self.extractor_profile)
         if self.extractor_profile == PROFILE_ADVERSARIAL:
             return AdversarialExtractor()
         if self.extractor_profile == PROFILE_ANTHROPIC:
@@ -71,18 +103,27 @@ def resolve(env: dict[str, str], override: str | None = None) -> Tiers:
         planner, _, extractor = override.partition(":")
         return Tiers(planner, extractor or planner, f"explicit: {override}")
 
-    has_anthropic = bool(env.get("ANTHROPIC_API_KEY"))
-    has_gemini = bool(env.get("GOOGLE_API_KEY") or env.get("GEMINI_API_KEY"))
+    keyed = {
+        PROFILE_ANTHROPIC: bool(env.get("ANTHROPIC_API_KEY")),
+        PROFILE_GEMINI: bool(env.get("GOOGLE_API_KEY") or env.get("GEMINI_API_KEY")),
+    }
+    # A key whose SDK is absent is announced, never silently ignored -- someone
+    # who exported a key deserves to know why it is not being used.
+    stranded = [p for p, has_key in keyed.items() if has_key and not sdk_installed(p)]
+    usable = [p for p, has_key in keyed.items() if has_key and sdk_installed(p)]
+    notes = [f"{p} key set but SDK missing: {_INSTALL_HINT[p]}" for p in stranded]
+    aside = "  (" + "; ".join(notes) + ")" if notes else ""
 
-    if has_anthropic and has_gemini:
+    if PROFILE_ANTHROPIC in usable and PROFILE_GEMINI in usable:
         # Distinct providers across the boundary: a jailbreak that works on the
         # extractor's model does not automatically transfer to the planner's.
-        return Tiers(PROFILE_ANTHROPIC, PROFILE_GEMINI, "two providers, split by authority")
-    if has_anthropic:
-        return Tiers(PROFILE_ANTHROPIC, PROFILE_ANTHROPIC, "one provider, separate contexts")
-    if has_gemini:
-        return Tiers(PROFILE_GEMINI, PROFILE_GEMINI, "one provider, separate contexts")
-    return Tiers(PROFILE_NONE, PROFILE_NONE, "no keys: deterministic stubs, zero network")
+        return Tiers(PROFILE_ANTHROPIC, PROFILE_GEMINI,
+                     "two providers, split by authority" + aside)
+    if usable:
+        only = usable[0]
+        return Tiers(only, only, f"{only}, separate contexts" + aside)
+    return Tiers(PROFILE_NONE, PROFILE_NONE,
+                 "no usable provider: deterministic stubs, zero model calls" + aside)
 
 
 def security_tiers() -> Tiers:

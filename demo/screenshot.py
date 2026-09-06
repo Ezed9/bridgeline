@@ -42,6 +42,7 @@ def main() -> int:
             f"Summarize the release notes at http://127.0.0.1:{port}/docs/notes "
             "and write it to notes/summary.md",
             "--workspace", str(workspace), "--allow-loopback", "--yes",
+            "--models", "none",
         ])
     finally:
         server.shutdown()

@@ -165,6 +165,19 @@ def planner_input_note(console: Console, instruction: str) -> None:
     del instruction
 
 
+def models_note(console: Console, planner: str, extractor: str, note: str) -> None:
+    line = Text()
+    line.append(f"{'models':<15}", style=theme.CHROME)
+    line.append(f"planner {planner}", style=theme.CONTENT)
+    line.append("  -  ", style=theme.MUTED)
+    line.append(f"extractor {extractor}", style=theme.CONTENT)
+    console.print(line)
+    if "(" in note:
+        warn = Text(" " * 15)
+        warn.append(note[note.index("(") + 1:].rstrip(")"), style=theme.SIGNAL)
+        console.print(warn)
+
+
 def task_note(console: Console, instruction: str) -> None:
     line = Text()
     line.append(f"{'task':<15}", style=theme.CHROME)
