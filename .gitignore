@@ -38,3 +38,6 @@ work/
 
 # uv
 uv.lock
+
+# Seeded design canvas (generated from design/*.dc.html; ~2MB)
+design/crawlgate-interface.html
