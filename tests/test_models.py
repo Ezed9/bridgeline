@@ -61,3 +61,64 @@ def test_the_security_configuration_needs_no_sdk_at_all() -> None:
     assert tiers.extractor_profile == models.PROFILE_ADVERSARIAL
     tiers.planner()
     tiers.extractor()
+
+
+class _Boom(RuntimeError):
+    pass
+
+
+def test_a_transient_429_is_retried_then_succeeds(monkeypatch) -> None:
+    from crawlgate import providers
+
+    monkeypatch.setattr(providers.time, "sleep", lambda _: None)
+    attempts: list[int] = []
+
+    def flaky() -> str:
+        attempts.append(1)
+        if len(attempts) < 3:
+            raise _Boom("429 RESOURCE_EXHAUSTED, please retry")
+        return "ok"
+
+    assert providers._call(flaky, "planner") == "ok"
+    assert len(attempts) == 3
+
+
+def test_a_daily_quota_is_not_retried(monkeypatch) -> None:
+    """Waiting out a per-day cap is not something a CLI can do, so four sleeps
+    would only delay the same failure."""
+    from crawlgate import providers
+
+    slept: list[float] = []
+    monkeypatch.setattr(providers.time, "sleep", lambda s: slept.append(s))
+
+    def daily() -> str:
+        raise _Boom("429 quotaId: GenerateRequestsPerDayPerProjectPerModel-FreeTier")
+
+    with pytest.raises(models.ProviderError, match="daily free-tier quota"):
+        providers._call(daily, "extractor")
+    assert slept == [], "a per-day quota must fail fast, not sleep"
+
+
+def test_a_non_transient_error_is_not_retried(monkeypatch) -> None:
+    from crawlgate import providers
+
+    monkeypatch.setattr(providers.time, "sleep", lambda _: None)
+    attempts: list[int] = []
+
+    def broken() -> str:
+        attempts.append(1)
+        raise _Boom("401 invalid api key")
+
+    with pytest.raises(models.ProviderError, match="401"):
+        providers._call(broken, "planner")
+    assert len(attempts) == 1
+
+
+def test_provider_failures_surface_as_one_named_exception(monkeypatch) -> None:
+    """The CLI catches exactly one type, so a model outage cannot unwind a stack
+    through three SDKs into the user's terminal."""
+    from crawlgate import providers
+
+    monkeypatch.setattr(providers.time, "sleep", lambda _: None)
+    with pytest.raises(models.ProviderError):
+        providers._call(lambda: (_ for _ in ()).throw(_Boom("503 unavailable")), "planner")

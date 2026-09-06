@@ -26,6 +26,12 @@ from dataclasses import dataclass
 from .extractor import AdversarialExtractor, EchoExtractor, Extractor
 from .planner import DeterministicPlanner, Planner
 
+
+class ProviderError(RuntimeError):
+    """A model call failed. Raised at the provider boundary so the CLI can say
+    something useful instead of unwinding a stack through three SDKs."""
+
+
 PROFILE_NONE = "none"
 PROFILE_ADVERSARIAL = "adversarial"
 PROFILE_ANTHROPIC = "anthropic"

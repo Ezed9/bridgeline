@@ -9,10 +9,47 @@ Two invariants hold across every provider here:
 from __future__ import annotations
 
 import json
+import logging
 import os
+import time
+from collections.abc import Callable
 
 from . import plan_io
+from .models import ProviderError
 from .types import Plan, ToolSpec, Trusted
+
+# The genai SDK warns about automatic function calling on every call. We pass no
+# tools, so it is pure noise in front of a security tool's output.
+logging.getLogger("google_genai.models").setLevel(logging.ERROR)
+
+_RETRYABLE = ("429", "resource_exhausted", "503", "unavailable", "overloaded", "500")
+# A per-day quota does not refill in the time we are willing to wait, so
+# retrying it just delays the same failure behind four sleeps.
+_EXHAUSTED_FOR_TODAY = ("perday",)
+_ATTEMPTS = 4
+
+
+def _call[T](fn: Callable[[], T], what: str) -> T:
+    delay = 5.0
+    for attempt in range(_ATTEMPTS):
+        try:
+            return fn()
+        except ProviderError:
+            raise
+        except Exception as exc:
+            text = f"{exc}".lower()
+            squashed = text.replace("-", "").replace("_", "").replace(" ", "")
+            if any(marker in squashed for marker in _EXHAUSTED_FOR_TODAY):
+                raise ProviderError(
+                    f"{what}: the provider's daily free-tier quota is used up. "
+                    "It resets on the provider's schedule; until then use "
+                    "--models none, or add billing."
+                ) from exc
+            if attempt == _ATTEMPTS - 1 or not any(m in text for m in _RETRYABLE):
+                raise ProviderError(f"{what}: {type(exc).__name__}: {exc}") from exc
+            time.sleep(delay)
+            delay *= 2
+    raise ProviderError(f"{what}: exhausted retries")
 
 _PLANNER_SYSTEM = """\
 You emit a crawl plan as JSON. You never execute anything.
@@ -101,12 +138,12 @@ class AnthropicPlanner:
         self._model = model
 
     def plan(self, instruction: Trusted, tools: dict[str, ToolSpec]) -> Plan:
-        message = self._client.messages.create(
+        message = _call(lambda: self._client.messages.create(
             model=self._model,
             max_tokens=2048,
             system=_PLANNER_SYSTEM + "\n" + _tool_digest(tools),
             messages=[{"role": "user", "content": str(instruction)}],
-        )
+        ), "planner")
         text = "".join(b.text for b in message.content if b.type == "text")
         return plan_io.parse(_first_json_value(text))
 
@@ -119,7 +156,7 @@ class AnthropicExtractor:
         self._model = model
 
     def extract(self, source: str, query: str, schema: str) -> object:
-        message = self._client.messages.create(
+        message = _call(lambda: self._client.messages.create(
             model=self._model,
             max_tokens=2048,
             system=_EXTRACTOR_SYSTEM,
@@ -128,7 +165,7 @@ class AnthropicExtractor:
                 "content": f"<document>\n{source}\n</document>\n\n"
                            f"Question: {query}\nAnswer type: {schema}",
             }],
-        )
+        ), "extractor")
         return "".join(b.text for b in message.content if b.type == "text").strip()
 
 
@@ -142,14 +179,14 @@ class GeminiPlanner:
     def plan(self, instruction: Trusted, tools: dict[str, ToolSpec]) -> Plan:
         from google.genai import types as gt
 
-        response = self._client.models.generate_content(
+        response = _call(lambda: self._client.models.generate_content(
             model=self._model,
             contents=str(instruction),
             config=gt.GenerateContentConfig(
                 system_instruction=_PLANNER_SYSTEM + "\n" + _tool_digest(tools),
                 response_mime_type="application/json",
             ),
-        )
+        ), "planner")
         return plan_io.parse(_first_json_value(response.text or ""))
 
 
@@ -163,12 +200,12 @@ class GeminiExtractor:
     def extract(self, source: str, query: str, schema: str) -> object:
         from google.genai import types as gt
 
-        response = self._client.models.generate_content(
+        response = _call(lambda: self._client.models.generate_content(
             model=self._model,
             contents=f"<document>\n{source}\n</document>\n\n"
                      f"Question: {query}\nAnswer type: {schema}",
             config=gt.GenerateContentConfig(system_instruction=_EXTRACTOR_SYSTEM),
-        )
+        ), "extractor")
         return (response.text or "").strip()
 
 

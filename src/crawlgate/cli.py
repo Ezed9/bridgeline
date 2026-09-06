@@ -10,10 +10,12 @@ from uuid import uuid4
 
 from dotenv import load_dotenv
 from rich.console import Console
+from rich.text import Text
 
 from . import __version__, models, plan_io
 from .fetch import HttpxClient
 from .guard import APPROVE_ASK, APPROVE_NEVER, APPROVE_SCOPE, NullGuard, build
+from .models import ProviderError
 from .runtime import execute
 from .tools import build_tools
 from .trace import KIND_PLAN_COMMITTED, KIND_RUN_END, KIND_RUN_START
@@ -32,6 +34,22 @@ def _allow_loopback(plan: Plan) -> Plan:
         for s in plan.steps
     )
     return replace(plan, steps=steps)
+
+
+def _provider_failure(err: Console, exc: ProviderError, run_dir: Path, fetched: bool) -> int:
+    """A model outage is not a crash. Say what failed, what survived, and what to
+    do -- rather than unwinding a stack through three SDKs."""
+    err.print()
+    err.print(Text(f"model unavailable  {exc}", style=theme.SIGNAL))
+    if fetched:
+        err.print(Text("the crawl itself completed; only the model call failed. "
+                       "The pages fetched and every gate decision are in the trace.",
+                       style=theme.CHROME))
+    err.print(Text(f"plan   {run_dir / 'plan.json'}", style=theme.MUTED))
+    err.print(Text(f"trace  {run_dir / 'trace.jsonl'}", style=theme.MUTED))
+    err.print(Text("re-run with --models none to use the deterministic stubs.",
+                   style=theme.CHROME))
+    return 3
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -98,8 +116,11 @@ def main(argv: list[str] | None = None) -> int:
 
         # The plan is committed before anything is fetched, so it is also the
         # first thing shown and the first thing written to disk.
-        plan = plan_io.load(args.plan) if args.plan else \
-            tiers.planner().plan(Trusted(instruction), tools)
+        try:
+            plan = plan_io.load(args.plan) if args.plan else \
+                tiers.planner().plan(Trusted(instruction), tools)
+        except ProviderError as exc:
+            return _provider_failure(err, exc, run_dir, fetched=False)
         if args.allow_loopback:
             plan = _allow_loopback(plan)
 
@@ -121,7 +142,10 @@ def main(argv: list[str] | None = None) -> int:
             if args.no_guard
             else build(plan, workspace, tools, args.approve, trace, run_dir / "audit.jsonl")
         )
-        result = execute(plan, tools, tiers.extractor(), guard, trace, HttpxClient())
+        try:
+            result = execute(plan, tools, tiers.extractor(), guard, trace, HttpxClient())
+        except ProviderError as exc:
+            return _provider_failure(err, exc, run_dir, fetched=True)
         trace.write(KIND_RUN_END, detail={"blocked": sum(1 for e in result.events if e.blocked),
                                           "executed": len(result.tools_called())})
 
