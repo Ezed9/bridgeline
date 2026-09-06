@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; background: #eceae5; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    a { color: #a86a1a; } a:hover { color: #7d4d09; }
+  </style>
+</helmet>
+
+<div style="padding: 40px 44px; display: flex; flex-direction: column; gap: 30px;">
+
+  <div style="display: flex; flex-direction: column; gap: 7px;">
+    <div class="mono" style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #8b8579;">crawlgate / theme</div>
+    <div style="font-size: 30px; font-weight: 600; color: #1c1e22; letter-spacing: -0.015em;">Slate, and exactly one signal</div>
+    <div style="font-size: 15px; line-height: 1.5; color: #57534a; max-width: 62ch;">Four semantic roles. Amber means one thing only — <strong>a gate refused something</strong> — and nothing else in the interface is ever amber, so a refusal is the only thing on screen that glows.</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px;">
+
+    <div style="display: flex; flex-direction: column; gap: 9px;">
+      <div class="mono" style="font-size: 11px; letter-spacing: 0.1em; color: #8b8579;">DARK GROUND</div>
+      <div class="mono" style="background: #12141a; border-radius: 5px; padding: 20px 22px; display: flex; flex-direction: column; gap: 11px; font-size: 13px; line-height: 1.5;">
+        <div style="color: #5b6472;">chrome &nbsp;· rules, labels, paths</div>
+        <div style="color: #d6dae2;">content · the answer itself</div>
+        <div style="color: #e0a458; font-weight: 700;">signal &nbsp;· a gate refused it</div>
+        <div style="color: #464e5c;">muted &nbsp;· budgets, timings</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 9px;">
+      <div class="mono" style="font-size: 11px; letter-spacing: 0.1em; color: #8b8579;">LIGHT GROUND</div>
+      <div class="mono" style="background: #f7f6f3; border: 1px solid #ddd9d1; border-radius: 5px; padding: 20px 22px; display: flex; flex-direction: column; gap: 11px; font-size: 13px; line-height: 1.5;">
+        <div style="color: #8b93a1;">chrome &nbsp;· rules, labels, paths</div>
+        <div style="color: #23262d;">content · the answer itself</div>
+        <div style="color: #a86a1a; font-weight: 700;">signal &nbsp;· a gate refused it</div>
+        <div style="color: #a8adb6;">muted &nbsp;· budgets, timings</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid #d8d4cc; padding-top: 24px;">
+    <div style="font-size: 15px; font-weight: 600; color: #1c1e22;">Colour never carries the verdict alone</div>
+    <div style="font-size: 14px; line-height: 1.55; color: #57534a; max-width: 68ch;">Roughly 8% of men cannot reliably separate red from green, and the verdict is precisely the signal that must not be missed. Glyph, layer name and indentation carry it; amber only reinforces. In the real terminal these map to <span class="mono" style="font-size: 13px;">ANSI</span> colours rather than fixed hex, so the palette inherits whatever theme the user already runs.</div>
+    <div class="mono" style="display: flex; flex-direction: column; gap: 9px; font-size: 13px; background: #12141a; border-radius: 5px; padding: 18px 22px; margin-top: 4px;">
+      <div><span style="color: #d6dae2;">&#9656;</span><span style="color: #5b6472;">&nbsp;&nbsp;executed &nbsp;&nbsp;&mdash; the step ran</span></div>
+      <div><span style="color: #e0a458; font-weight: 700;">&#10800;</span><span style="color: #5b6472;">&nbsp;&nbsp;refused &nbsp;&nbsp;&mdash; always followed by the layer that refused it</span></div>
+      <div><span style="color: #5b6472;">&middot;</span><span style="color: #5b6472;">&nbsp;&nbsp;skipped &nbsp;&nbsp;&mdash; budget, dedupe, redirect not followed</span></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

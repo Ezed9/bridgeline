@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; background: #12141a; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .sp { white-space: pre; }
+    a { color: #e0a458; } a:hover { color: #f0bd7e; }
+  </style>
+</helmet>
+<div style="padding: 40px 44px; display: flex; flex-direction: column; gap: 30px;">
+
+  <div style="display: flex; flex-direction: column; gap: 7px;">
+    <div class="mono" style="font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #6b7382;">crawlgate / mascot</div>
+    <div style="font-size: 30px; font-weight: 600; color: #eef0f4; letter-spacing: -0.015em;">A spider in the doorway</div>
+    <div style="font-size: 15px; line-height: 1.5; color: #9aa3b2; max-width: 64ch;">One eight-stroke drawing in three states. <strong style="color: #d6dae2; font-weight: 600;">Rest</strong> and <strong style="color: #d6dae2; font-weight: 600;">watching</strong> differ by exactly two characters, so it reads as a mood change rather than a different creature. <strong style="color: #e0a458; font-weight: 600;">Braced</strong> leaves the spider untouched and wraps it in a frame.</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; background: #0d0f14; border-radius: 6px; padding: 30px 28px;">
+    <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+      <div class="mono" style="font-size: 11px; letter-spacing: 0.14em; color: #8b93a1;">REST</div>
+      <pre class="mono sp" style="margin: 0; color: #d6dae2; font-size: 17px; line-height: 1.32;"> \\  //
+--(oo)--
+ //  \\</pre>
+      <div style="font-size: 13px; line-height: 1.5; color: #7d8797; max-width: 26ch;">In the banner. Calm, watchful.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+      <div class="mono" style="font-size: 11px; letter-spacing: 0.14em; color: #8b93a1;">WATCHING</div>
+      <pre class="mono sp" style="margin: 0; color: #d6dae2; font-size: 17px; line-height: 1.32;"> \\  //
+--(OO)--
+ //  \\</pre>
+      <div style="font-size: 13px; line-height: 1.5; color: #7d8797; max-width: 26ch;">While a crawl runs. Eyes widen &mdash; <span style="color:#c3cad6">oo</span> becomes <span style="color:#c3cad6">OO</span>. Nothing else moves.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+      <div class="mono" style="font-size: 11px; letter-spacing: 0.14em; color: #8b93a1;">BRACED</div>
+      <pre class="mono sp" style="margin: 0; color: #e0a458; font-size: 17px; line-height: 1.32;">┌────────┐
+│ \\  // │
+│--(OO)--│
+│ //  \\ │</pre>
+      <div style="font-size: 13px; line-height: 1.5; color: #7d8797; max-width: 26ch;">Beside a refusal. Middle legs jammed against both jambs.</div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 11px; border-top: 1px solid #242832; padding-top: 24px;">
+    <div style="font-size: 15px; font-weight: 600; color: #eef0f4;">Why the frame, and not a different pose</div>
+    <div style="font-size: 14px; line-height: 1.6; color: #9aa3b2; max-width: 70ch;">A refusal has to be legible in peripheral vision, before anyone reads a word. The lintel <span class="mono" style="color: #e0a458; font-size: 13px;">&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;</span> is a horizontal contrast bar that no other state has &mdash; the eye catches it well before it resolves a leg. Variants that only moved leg position were invisible until focused on.</div>
+    <div style="font-size: 14px; line-height: 1.6; color: #9aa3b2; max-width: 70ch; margin-top: 4px;">The frame is open at the bottom: a doorway you walk <em style="color: #d6dae2; font-style: normal;">through</em>, not a box the spider sits in. Closing it turns the mark into a portrait rather than an obstruction.</div>
+    <div style="font-size: 14px; line-height: 1.6; color: #9aa3b2; max-width: 70ch; margin-top: 4px;">Braced is 4 rows against rest's 3, so rest and watching carry a leading blank line. All three occupy a stable 4-row block and the header never jumps when a refusal fires.</div>
+    <div style="font-size: 13.5px; line-height: 1.6; color: #6b7382; max-width: 70ch; margin-top: 8px;">ASCII plus four box-drawing glyphs only &mdash; no emoji, nothing exotic. Diagonals use <span class="mono" style="color:#9aa3b2">\\</span> and <span class="mono" style="color:#9aa3b2">//</span> rather than <span class="mono" style="color:#9aa3b2">&#9585;&#9586;</span>, whose font coverage is patchy: a fallback face at a different advance width would shear the drawing sideways in exactly the plain-xterm-over-SSH case this has to survive.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

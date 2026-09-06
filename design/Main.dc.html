@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .row { display: flex; align-items: flex-start; }
+    .sp { white-space: pre; }
+    .sans { font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; }
+    a { color: #e0a458; } a:hover { color: #f0bd7e; }
+  </style>
+</helmet>
+<div style="background: {{bg}}; min-height: 100%; padding: 26px 30px; font-size: 13px; line-height: 1.62;">
+  <div class="row" style="gap: 14px; align-items: center;">
+    <pre class="sp" style="margin: 0; color: {{content}}; font-size: 12px; line-height: 1.15;"> \\  //
+--(oo)--
+ //  \\</pre>
+    <div><span style="color: {{content}}; font-weight: 700; letter-spacing: 0.02em;">crawlgate</span><span style="color: {{muted}};">&nbsp;&nbsp;0.1.0</span></div>
+  </div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 16px 0 14px;"></div>
+
+  <div class="row"><span class="sp" style="color: {{content}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{muted}}; width: 3ch; flex: none;">1</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">fetch</span><span style="color: {{content}};">https://docs.example.test/docs/notes</span></div>
+
+  <div class="row" style="margin-top: 4px;"><span class="sp" style="width: 6ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{chrome}}; width: 6ch; flex: none;">200</span><span class="sp" style="color: {{content}}; width: 30ch; flex: none;">/docs/notes</span><span style="color: {{muted}};">4.1 kB</span></div>
+  <div class="row"><span class="sp" style="width: 6ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{chrome}}; width: 6ch; flex: none;">200</span><span class="sp" style="color: {{content}}; width: 30ch; flex: none;">/docs/upgrade</span><span style="color: {{muted}};">2.8 kB</span></div>
+
+  <div class="row" style="gap: 14px; margin: 12px 0 12px 24px; align-items: flex-start;">
+    <pre class="sp" style="margin: 0; color: {{signal}}; font-size: 12px; line-height: 1.3; flex: none;">┌────────┐
+│ \\  // │
+│--(OO)--│
+│ //  \\ │</pre>
+    <div style="padding-top: 2px;">
+      <div class="row"><span class="sp" style="color: {{signal}}; font-weight: 700; width: 3ch; flex: none;">&#10800;</span><span class="sp" style="color: {{signal}}; font-weight: 700; width: 11ch; flex: none;">REFUSED</span><span class="sp" style="color: {{signal}};">netpolicy</span></div>
+      <div class="row" style="margin-top: 3px;"><span class="sp" style="width: 3ch; flex: none;"> </span><span style="color: {{content}};">http://attacker.test/collect?d=all</span></div>
+      <div class="row"><span class="sp" style="width: 3ch; flex: none;"> </span><span style="color: {{chrome}};">host 'attacker.test' not in plan scope</span></div>
+      <div class="row" style="margin-top: 5px;"><span class="sp" style="width: 3ch; flex: none;"> </span><span style="color: {{muted}};">the page named this destination &mdash; the plan did not</span></div>
+    </div>
+  </div>
+
+  <div class="row"><span class="sp" style="width: 6ch; flex: none;"> </span><span class="sp" style="color: {{muted}}; width: 3ch; flex: none;">&middot;</span><span class="sp" style="color: {{chrome}}; width: 6ch; flex: none;">skip</span><span class="sp" style="color: {{chrome}}; width: 30ch; flex: none;">/admin/keys</span><span style="color: {{muted}};">outside prefix '/docs'</span></div>
+  <div class="row" style="margin: 8px 0 14px;"><span class="sp" style="width: 6ch; flex: none;"> </span><span style="color: {{muted}};">2 pages &nbsp;&middot;&nbsp; 1 refused &nbsp;&middot;&nbsp; 1 skipped</span></div>
+
+  <div class="row"><span class="sp" style="color: {{content}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{muted}}; width: 3ch; flex: none;">2</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">extract</span><span class="sp" style="color: {{chrome}}; width: 30ch; flex: none;">from pages &middot; schema string</span><span style="color: {{muted}};">4 812 chars</span></div>
+  <div class="row"><span class="sp" style="color: {{content}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{muted}}; width: 3ch; flex: none;">3</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">write_file</span><span class="sp" style="color: {{content}}; width: 30ch; flex: none;">notes/summary.md</span><span style="color: {{muted}};">1 204 chars</span></div>
+  <div class="row"><span class="sp" style="color: {{content}}; width: 3ch; flex: none;">&#9656;</span><span class="sp" style="color: {{muted}}; width: 3ch; flex: none;">4</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">report</span></div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 16px 0 12px;"></div>
+  <div class="row"><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">trace</span><span style="color: {{muted}};">work/.crawlgate/runs/96bfa657/trace.jsonl</span></div>
+  <div class="row"><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">exit</span><span style="color: {{content}};">2</span><span style="color: {{muted}};">&nbsp;&nbsp;&mdash; a gate refused something</span></div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"ground":{"editor":"enum","options":["dark","light"],"default":"dark"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = (this.props.ground ?? "dark") === "light";
+    return light
+      ? { bg: "#f7f6f3", chrome: "#8b93a1", content: "#23262d", signal: "#a86a1a", muted: "#a8adb6", rule: "#ddd9d1" }
+      : { bg: "#12141a", chrome: "#5b6472", content: "#d6dae2", signal: "#e0a458", muted: "#464e5c", rule: "#242832" };
+  }
+}
+</script>
+</body>
+</html>

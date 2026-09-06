@@ -9,6 +9,7 @@ dependencies = [
     "mcp-bouncer>=0.1.0",
     "httpx>=0.27",
     "selectolax>=0.3.21",
+    "rich>=13.7",
 ]
 
 [project.optional-dependencies]

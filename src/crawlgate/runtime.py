@@ -202,6 +202,11 @@ def execute(
             if name in tainted_names and isinstance(resolved.get(name), str):
                 resolved[name] = netpolicy.defang(resolved[name])
 
+        # Emitted BEFORE the tool runs, so a frontier event can be attributed
+        # to the step that caused it. Blocked steps never reach here, so a
+        # started record always has a matching executed or nothing at all.
+        trace.write(KIND_STEP, outcome="started", step_index=i, tool=step.tool, args=resolved)
+
         # ---- Layer 1 passed. Layer 2 now. ----
         if step.tool == "fetch":
             if step.scope is None:

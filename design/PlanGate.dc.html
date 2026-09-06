@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap">
+  <style>
+    body { margin: 0; font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .row { display: flex; align-items: flex-start; }
+    .sp { white-space: pre; }
+    a { color: #e0a458; } a:hover { color: #f0bd7e; }
+  </style>
+</helmet>
+<div style="background: {{bg}}; min-height: 100%; padding: 26px 30px; font-size: 13px; line-height: 1.62;">
+
+  <div class="row" style="gap: 14px; align-items: center;">
+    <pre class="sp" style="margin: 0; color: {{content}}; font-size: 12px; line-height: 1.15;"> \\  //
+--(oo)--
+ //  \\</pre>
+    <div>
+      <span style="color: {{content}}; font-weight: 700; letter-spacing: 0.02em;">crawlgate</span>
+      <span style="color: {{muted}};">&nbsp;&nbsp;0.1.0</span>
+    </div>
+  </div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 16px 0 14px;"></div>
+
+  <div class="row"><span class="sp" style="color: {{chrome}}; width: 16ch; flex: none;">task</span><span style="color: {{content}};">Summarize the release notes at docs.example.test/docs/notes and write the summary to notes/summary.md</span></div>
+  <div class="row" style="margin-top: 6px;"><span class="sp" style="color: {{chrome}}; width: 16ch; flex: none;">planner input</span><span style="color: {{chrome}};">your instruction only &mdash; <span style="color: {{content}};">0 bytes</span> of page content</span></div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 14px 0;"></div>
+
+  <div class="row" style="margin-bottom: 12px;"><span class="sp" style="color: {{content}}; font-weight: 700; width: 16ch; flex: none;">PLAN</span><span style="color: {{chrome}};">committed before anything is fetched &nbsp;&middot;&nbsp; 4 steps</span></div>
+
+  <div class="row"><span class="sp" style="color: {{muted}}; width: 4ch; flex: none;">1</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">fetch</span><span style="color: {{content}};">https://docs.example.test/docs/notes</span></div>
+  <div class="row"><span class="sp" style="width: 16ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">scope</span><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">hosts</span><span style="color: {{content}};">docs.example.test</span></div>
+  <div class="row"><span class="sp" style="width: 25ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">prefix</span><span style="color: {{content}};">/docs</span></div>
+  <div class="row"><span class="sp" style="width: 25ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">depth</span><span style="color: {{content}};">2</span><span style="color: {{chrome}};">&nbsp;&nbsp;&nbsp;&nbsp;pages &le; </span><span style="color: {{content}};">8</span></div>
+  <div class="row" style="margin-bottom: 10px;"><span class="sp" style="width: 16ch; flex: none;"> </span><span style="color: {{muted}};">&rarr; pages</span></div>
+
+  <div class="row"><span class="sp" style="color: {{muted}}; width: 4ch; flex: none;">2</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">extract</span><span style="color: {{chrome}};">from <span style="color: {{muted}};">{{pages}}</span> &nbsp;&middot;&nbsp; schema <span style="color: {{content}};">string</span></span></div>
+  <div class="row" style="margin-bottom: 10px;"><span class="sp" style="width: 16ch; flex: none;"> </span><span style="color: {{muted}};">&rarr; summary</span></div>
+
+  <div class="row"><span class="sp" style="color: {{muted}}; width: 4ch; flex: none;">3</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">write_file</span><span style="color: {{content}};">notes/summary.md</span></div>
+  <div class="row" style="margin-bottom: 10px;"><span class="sp" style="width: 16ch; flex: none;"> </span><span class="sp" style="color: {{chrome}}; width: 9ch; flex: none;">content</span><span style="color: {{muted}};">{{summary}}</span></div>
+
+  <div class="row"><span class="sp" style="color: {{muted}}; width: 4ch; flex: none;">4</span><span class="sp" style="color: {{content}}; width: 12ch; flex: none;">report</span><span style="color: {{muted}};">{{summary}}</span></div>
+
+  <div style="height: 1px; background: {{rule}}; margin: 16px 0 12px;"></div>
+
+  <div style="color: {{chrome}};">every destination above is a literal &nbsp;&middot;&nbsp; every <span style="color: {{muted}};">{{slot}}</span> sits in a content position</div>
+  <div style="margin-top: 12px; color: {{chrome}};"><span style="color: {{content}}; font-weight: 700;">[a]</span> approve &nbsp;&nbsp;&nbsp;<span style="color: {{content}}; font-weight: 700;">[e]</span> edit in $EDITOR &nbsp;&nbsp;&nbsp;<span style="color: {{content}}; font-weight: 700;">[q]</span> quit</div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"ground":{"editor":"enum","options":["dark","light"],"default":"dark"}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const light = (this.props.ground ?? "dark") === "light";
+    return light
+      ? { bg: "#f7f6f3", chrome: "#8b93a1", content: "#23262d", signal: "#a86a1a", muted: "#a8adb6", rule: "#ddd9d1" }
+      : { bg: "#12141a", chrome: "#5b6472", content: "#d6dae2", signal: "#e0a458", muted: "#464e5c", rule: "#242832" };
+  }
+}
+</script>
+</body>
+</html>
