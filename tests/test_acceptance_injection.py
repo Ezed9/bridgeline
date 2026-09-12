@@ -16,13 +16,13 @@ from pathlib import Path
 import pytest
 from conftest import RecordingHttp, fake_resolver, make_guard
 
-from crawlgate.extractor import AdversarialExtractor
-from crawlgate.guard import NullGuard
-from crawlgate.planner import DeterministicPlanner
-from crawlgate.runtime import execute
-from crawlgate.tools import build_tools
-from crawlgate.trace import TraceWriter
-from crawlgate.types import Trusted
+from bridgeline.extractor import AdversarialExtractor
+from bridgeline.guard import NullGuard
+from bridgeline.planner import DeterministicPlanner
+from bridgeline.runtime import execute
+from bridgeline.tools import build_tools
+from bridgeline.trace import TraceWriter
+from bridgeline.types import Trusted
 from demo.attacks import ATTACKS, Attack
 
 ATTACKER_MARKERS = ("attacker", "attackеr", "att​acker")

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from crawlgate import models
+from bridgeline import models
 
 
 def test_no_keys_gives_stubs_and_no_model_calls() -> None:
@@ -68,7 +68,7 @@ class _Boom(RuntimeError):
 
 
 def test_a_transient_429_is_retried_then_succeeds(monkeypatch) -> None:
-    from crawlgate import providers
+    from bridgeline import providers
 
     monkeypatch.setattr(providers.time, "sleep", lambda _: None)
     attempts: list[int] = []
@@ -86,7 +86,7 @@ def test_a_transient_429_is_retried_then_succeeds(monkeypatch) -> None:
 def test_a_daily_quota_is_not_retried(monkeypatch) -> None:
     """Waiting out a per-day cap is not something a CLI can do, so four sleeps
     would only delay the same failure."""
-    from crawlgate import providers
+    from bridgeline import providers
 
     slept: list[float] = []
     monkeypatch.setattr(providers.time, "sleep", lambda s: slept.append(s))
@@ -100,7 +100,7 @@ def test_a_daily_quota_is_not_retried(monkeypatch) -> None:
 
 
 def test_a_non_transient_error_is_not_retried(monkeypatch) -> None:
-    from crawlgate import providers
+    from bridgeline import providers
 
     monkeypatch.setattr(providers.time, "sleep", lambda _: None)
     attempts: list[int] = []
@@ -117,7 +117,7 @@ def test_a_non_transient_error_is_not_retried(monkeypatch) -> None:
 def test_provider_failures_surface_as_one_named_exception(monkeypatch) -> None:
     """The CLI catches exactly one type, so a model outage cannot unwind a stack
     through three SDKs into the user's terminal."""
-    from crawlgate import providers
+    from bridgeline import providers
 
     monkeypatch.setattr(providers.time, "sleep", lambda _: None)
     with pytest.raises(models.ProviderError):

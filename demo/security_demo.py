@@ -1,7 +1,7 @@
 """The security demo. No API key, no network, no live model.
 
-Runs every attack through an undefended agent and through crawlgate, and prints
-the comparison. Exits non-zero if crawlgate leaks even once -- and ALSO if the
+Runs every attack through an undefended agent and through bridgeline, and prints
+the comparison. Exits non-zero if bridgeline leaks even once -- and ALSO if the
 undefended baseline is never hijacked, because a corpus without teeth proves
 nothing.
 """
@@ -13,13 +13,13 @@ import sys
 import tempfile
 from pathlib import Path
 
-from crawlgate.extractor import AdversarialExtractor
-from crawlgate.guard import NullGuard, build
-from crawlgate.planner import DeterministicPlanner
-from crawlgate.runtime import execute
-from crawlgate.tools import build_tools
-from crawlgate.trace import TraceWriter
-from crawlgate.types import Trusted
+from bridgeline.extractor import AdversarialExtractor
+from bridgeline.guard import NullGuard, build
+from bridgeline.planner import DeterministicPlanner
+from bridgeline.runtime import execute
+from bridgeline.tools import build_tools
+from bridgeline.trace import TraceWriter
+from bridgeline.types import Trusted
 from demo.attacks import ATTACKS, Attack
 from demo.baseline import run_undefended
 
@@ -30,7 +30,7 @@ _LIVE_URL = re.compile(r"https?://[^\s)\]\"']+")
 
 class _Http:
     def __init__(self, attack: Attack) -> None:
-        from crawlgate.fetch import HttpResponse
+        from bridgeline.fetch import HttpResponse
 
         self._pages = dict(attack.pages)
         self._pages.setdefault(f"https://{IN_SCOPE_HOST}/robots.txt",
@@ -90,7 +90,7 @@ def main() -> int:
                          why or why_l1))
 
     width = max(len(r[0]) for r in rows)
-    print(f"{'attack':<{width}}  undefended  crawlgate  layer-1-only")
+    print(f"{'attack':<{width}}  undefended  bridgeline  layer-1-only")
     print("-" * (width + 38))
     for name, hijacked, both, l1, why in rows:
         print(f"{name:<{width}}  {'HIJACKED' if hijacked else 'survived':<10}  "
@@ -99,10 +99,10 @@ def main() -> int:
     hijacked = sum(1 for r in rows if r[1])
     leaks = sum(1 for r in rows if r[2] or r[3])
     print(f"\nundefended hijacked : {hijacked}/{len(rows)}")
-    print(f"crawlgate leaks     : {leaks}/{len(rows)}")
+    print(f"bridgeline leaks     : {leaks}/{len(rows)}")
 
     if leaks:
-        print("\nFAIL: crawlgate leaked. The mechanism is unsound (SPEC K-security).")
+        print("\nFAIL: bridgeline leaked. The mechanism is unsound (SPEC K-security).")
         return 1
     if hijacked < 6:
         print("\nFAIL: the corpus cannot hijack an undefended agent, so it proves "

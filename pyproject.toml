@@ -1,5 +1,5 @@
 [project]
-name = "crawlgate"
+name = "bridgeline"
 version = "0.1.0"
 description = "A crawling agent harness where page content structurally cannot become an instruction"
 readme = "README.md"
@@ -18,8 +18,12 @@ dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "ruff>=0.6"]
 gemini = ["google-genai>=1.0"]
 anthropic = ["anthropic>=0.40"]
 
+[project.urls]
+Homepage = "https://github.com/Ezed9/bridgeline"
+Issues = "https://github.com/Ezed9/bridgeline/issues"
+
 [project.scripts]
-crawlgate = "crawlgate.cli:main"
+bridgeline = "bridgeline.cli:main"
 
 [tool.uv.sources]
 mcp-bouncer = { path = "../Fable/bouncer", editable = true }
@@ -41,4 +45,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/crawlgate"]
+packages = ["src/bridgeline"]

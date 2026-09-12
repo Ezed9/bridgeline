@@ -46,7 +46,7 @@ SPIDER_BRACED = r"""┌────────┐
 │--(OO)--│
 │ //  \\ │"""
 
-LOGO = r"""\\(oo)//  crawlgate
+LOGO = r"""\\(oo)//  bridgeline
 //    \\"""
 
 
@@ -80,7 +80,7 @@ _ASCII = Glyphs(
     branch="`",
     spider_rest="",
     spider_braced="",
-    logo="crawlgate",
+    logo="bridgeline",
 )
 
 
@@ -111,7 +111,7 @@ def color_enabled(stream: object | None = None) -> bool:
     """Honour the conventions before honouring ourselves."""
     if os.environ.get("NO_COLOR"):
         return False
-    if os.environ.get("CRAWLGATE_NO_COLOR"):
+    if os.environ.get("BRIDGELINE_NO_COLOR"):
         return False
     if os.environ.get("TERM") == "dumb":
         return False

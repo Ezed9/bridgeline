@@ -1,6 +1,12 @@
 # crawlgate — pre-registration
 
 **Status: pre-registered. Written and committed before `src/` exists.**
+
+> **2026-09-12.** The project was renamed `crawlgate` -> `bridgeline` after
+> these results were measured. This file is preserved verbatim as
+> pre-registered: the old name is left in place throughout, and **no success
+> or kill criterion has been altered.** `git log -p SPEC.md` shows this note
+> is the only change since the pre-registration commit.
 Success *and* kill criteria below are fixed now, so a negative result is
 reportable rather than embarrassing.
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from conftest import EVIL_HOST, GOOD_HOST, fake_resolver, good_scope, null_guard
 
-from crawlgate.fetch import crawl, discover_links, visible_text
+from bridgeline.fetch import crawl, discover_links, visible_text
 
 
 def _crawl(http, trace, scope=None, seed=None):

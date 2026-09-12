@@ -19,7 +19,7 @@ from .guard import Guard
 from .trace import KIND_HTTP, KIND_SKIP, LAYER_CONTRACT, LAYER_NETPOLICY, TraceWriter
 from .types import CrawlScope, Page, PageSet
 
-USER_AGENT = "crawlgate/0.1 (+https://example.invalid/crawlgate)"
+USER_AGENT = "bridgeline/0.1 (+https://example.invalid/bridgeline)"
 _MIN_HOST_DELAY_S = 1.0
 
 

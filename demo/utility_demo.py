@@ -21,21 +21,21 @@ import tempfile
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from crawlgate import netpolicy
-from crawlgate.extractor import EchoExtractor
-from crawlgate.guard import NullGuard, build
-from crawlgate.planner import DeterministicPlanner
-from crawlgate.runtime import execute
-from crawlgate.tools import build_tools
-from crawlgate.trace import TraceWriter
-from crawlgate.types import Plan, Trusted
+from bridgeline import netpolicy
+from bridgeline.extractor import EchoExtractor
+from bridgeline.guard import NullGuard, build
+from bridgeline.planner import DeterministicPlanner
+from bridgeline.runtime import execute
+from bridgeline.tools import build_tools
+from bridgeline.trace import TraceWriter
+from bridgeline.types import Plan, Trusted
 from demo.categories import CATEGORIES, MEASURED, STRUCTURAL
 from demo.tasks import TASKS, Task
 
 
 class _Http:
     def __init__(self, task: Task) -> None:
-        from crawlgate.fetch import HttpResponse
+        from bridgeline.fetch import HttpResponse
 
         self._pages = dict(task.pages)
         for host in {"docs.example.test", "blog.other.test", "status.example.test"}:

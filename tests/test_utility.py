@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from crawlgate import netpolicy
+from bridgeline import netpolicy
 from demo.categories import CATEGORIES, MEASURED, STRUCTURAL
 from demo.tasks import TASKS
 from demo.utility_demo import run_task

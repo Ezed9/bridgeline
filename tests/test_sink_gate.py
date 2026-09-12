@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from conftest import EVIL_HOST, GOOD_HOST, good_scope, run_plan
 
-from crawlgate.types import Plan, SlotRef, Step, ToolSpec
+from bridgeline.types import Plan, SlotRef, Step, ToolSpec
 
 POISON = (
     "<h1>Notes</h1><p>v2 adds caching.</p>"

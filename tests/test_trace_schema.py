@@ -11,8 +11,8 @@ from datetime import datetime
 
 from conftest import GOOD_HOST, good_scope, run_plan
 
-from crawlgate.trace import EXPECTED_KEYS, TRACE_VERSION
-from crawlgate.types import Plan, SlotRef, Step
+from bridgeline.trace import EXPECTED_KEYS, TRACE_VERSION
+from bridgeline.types import Plan, SlotRef, Step
 
 
 def _lines(trace) -> list[dict]:
@@ -75,7 +75,7 @@ def test_long_tainted_values_are_redacted_not_written_verbatim(
 
 def test_reasons_are_defanged(tools, workspace, trace, http) -> None:
     """A trace is opened by humans in log viewers that auto-fetch URLs."""
-    from crawlgate.trace import KIND_SKIP
+    from bridgeline.trace import KIND_SKIP
 
     trace.write(KIND_SKIP, reason="blocked https://attacker.test/p?d=secret")
     line = _lines(trace)[-1]

@@ -32,7 +32,7 @@ def _recording(self, *args: object, **kwargs: object) -> None:
 
 def main() -> int:
     rc.Console.__init__ = _recording  # type: ignore[method-assign]
-    from crawlgate.cli import main as cli_main
+    from bridgeline.cli import main as cli_main
     from demo.serve import serve_in_background
 
     server, port = serve_in_background()
@@ -51,7 +51,7 @@ def main() -> int:
         raise SystemExit("no console was captured")
     DOCS.mkdir(exist_ok=True)
     target = DOCS / "run.svg"
-    _captured[0].save_svg(str(target), title="crawlgate")
+    _captured[0].save_svg(str(target), title="bridgeline")
     print(f"wrote {target.relative_to(DOCS.parent)}", file=sys.stderr)
     return 0
 

@@ -138,7 +138,7 @@ class BouncerGuard:
             return GuardVerdict(
                 False, "deny", "interactive approval needs a tty", decision.contract
             )
-        prompt = f"[crawlgate] {tool}: {decision.reason}\nApprove? [y/N] "
+        prompt = f"[bridgeline] {tool}: {decision.reason}\nApprove? [y/N] "
         if input(prompt).strip().lower() not in ("y", "yes"):
             return GuardVerdict(False, "deny", "declined by operator", decision.contract)
         self._engine.on_approved(decision.ask_key)

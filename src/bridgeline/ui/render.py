@@ -5,7 +5,7 @@ subclass that overrides it, calls `super()`, and draws is the entire live UI --
 `runtime.py`, `fetch.py`, `guard.py` and `netpolicy.py` need no changes at all.
 The UI observes the security path; it cannot alter a decision.
 
-Chrome goes to stderr and the answer to stdout, so `crawlgate ... > out.md`
+Chrome goes to stderr and the answer to stdout, so `bridgeline ... > out.md`
 still yields a clean file.
 """
 
@@ -82,7 +82,7 @@ class RenderingTraceWriter(TraceWriter):
         if self._g.spider_rest:
             self._c.print(Text(self._g.spider_rest, style=theme.CONTENT))
         head = Text()
-        head.append("crawlgate", style="bold")
+        head.append("bridgeline", style="bold")
         head.append(f"  {version}", style=theme.MUTED)
         self._c.print(head)
         self.rule()

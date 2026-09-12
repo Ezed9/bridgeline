@@ -34,10 +34,9 @@ htmlcov/
 
 # Run artifacts (traces, audit logs, crawled pages)
 work/
-.crawlgate/
+.bridgeline/
 
-# uv
-uv.lock
+# uv: the lockfile IS tracked -- a published CLI needs a reproducible CI.
 
 # Seeded design canvas (generated from design/*.dc.html; ~2MB)
-design/crawlgate-interface.html
+design/bridgeline-interface.html

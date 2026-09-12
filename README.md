@@ -1,17 +1,17 @@
 ```
-\\(oo)//  crawlgate
+\\(oo)//  bridgeline
 //    \\
 ```
 
 A small agentic harness that crawls the web, in which **page content
 structurally cannot become an instruction**.
 
-An agent that reads the open web is reading attacker-controlled text. crawlgate's
+An agent that reads the open web is reading attacker-controlled text. bridgeline's
 answer is not to detect that, but to make it not matter: a trusted planner
 commits the complete plan *before* any byte is fetched, and nothing read
 afterwards can add, remove, reorder or redirect a tool call.
 
-![a crawlgate run: the plan committed up front, then a page's attempt to redirect the crawl refused](docs/run.svg)
+![a bridgeline run: the plan committed up front, then a page's attempt to redirect the crawl refused](docs/run.svg)
 
 That image is a real run against `demo/serve.py`, exported from the terminal
 rather than mocked. The fixture page carries an injected instruction to fetch
@@ -26,7 +26,7 @@ uv run pytest -q
 ```
 
 ```bash
-uv run crawlgate "Summarize the release notes at https://example.com/docs/notes and write the summary to notes/summary.md" --workspace ./work
+uv run bridgeline "Summarize the release notes at https://example.com/docs/notes and write the summary to notes/summary.md" --workspace ./work
 ```
 
 You get the committed plan first, and approve it, edit it in `$EDITOR`, or quit.
@@ -35,7 +35,7 @@ Every destination in it — the seed URL, every field of `scope`, every
 That is the whole invariant, on one screen, before anything is fetched.
 `--dry-run` prints the plan as JSON and exits; `--yes` skips the gate.
 
-Chrome goes to stderr and the answer to stdout, so `crawlgate … > out.md` still
+Chrome goes to stderr and the answer to stdout, so `bridgeline … > out.md` still
 gives you a clean file, and a redirected stream gets no colour and no mascot.
 
 ## Two layers

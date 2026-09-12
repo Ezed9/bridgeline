@@ -19,9 +19,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from crawlgate import models, plan_io
-from crawlgate.tools import build_tools
-from crawlgate.types import Plan, SlotRef, Trusted
+from bridgeline import models, plan_io
+from bridgeline.tools import build_tools
+from bridgeline.types import Plan, SlotRef, Trusted
 from demo.tasks import TASKS
 
 

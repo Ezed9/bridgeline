@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from conftest import GOOD_HOST, good_scope, run_plan
 
-from crawlgate.plan_io import PlanError, loads
-from crawlgate.runtime import CapabilityError
-from crawlgate.types import Plan, SlotRef, Step
+from bridgeline.plan_io import PlanError, loads
+from bridgeline.runtime import CapabilityError
+from bridgeline.types import Plan, SlotRef, Step
 
 
 def test_a_tool_absent_from_the_plan_never_executes(tools, workspace, trace, http) -> None:

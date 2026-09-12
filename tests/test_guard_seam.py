@@ -7,8 +7,8 @@ from pathlib import Path
 
 from conftest import EVIL_HOST, GOOD_HOST, good_scope, make_guard, run_plan
 
-from crawlgate.guard import build_policies
-from crawlgate.types import Plan, Step
+from bridgeline.guard import build_policies
+from bridgeline.types import Plan, Step
 
 SRC = Path(__file__).resolve().parents[1] / "src"
 
@@ -129,7 +129,7 @@ def test_layer_two_alone_catches_a_deliberately_broken_scope_regex(
 ) -> None:
     """The inverse of test_layer1_alone: if Layer 1's scope predicate had a hole,
     Layer 2 would still refuse the request."""
-    from crawlgate import netpolicy
+    from bridgeline import netpolicy
 
     monkeypatch.setattr(netpolicy, "reject", lambda url, scope, robots=None, resolver=None: None)
     http.add(f"https://{GOOD_HOST}/docs/n",

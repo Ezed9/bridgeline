@@ -1,4 +1,4 @@
-from crawlgate.cli import main
+from bridgeline.cli import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

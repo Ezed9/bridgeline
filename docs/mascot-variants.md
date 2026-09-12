@@ -1,4 +1,4 @@
-# crawlgate mascot — ASCII variants
+# bridgeline mascot — ASCII variants
 
 A spider at a doorway. The crawler *is* the creature, and it sits at a threshold it will not cross.
 
@@ -222,7 +222,7 @@ If the header must be exactly 3 rows, substitute **B3** for B1 and accept a weak
 ### Option A — two-line, spider-forward
 
 ```
-\\(oo)//  crawlgate
+\\(oo)//  bridgeline
 //    \\
 ```
 
@@ -231,7 +231,7 @@ The body and the wordmark share a baseline, so the eyes sit at cap height next t
 ### Option B — one-line, gate-forward
 
 ```
-│--(oo)--│ crawlgate
+│--(oo)--│ bridgeline
 ```
 
 For places that genuinely cannot take two lines: a README badge row, an npm description, the first line of `--help`. Being honest about what this is — on one line the top and bottom legs are gone, so it is a pair of eyes braced between two jambs, not a legible spider. It works because the jambs carry the *gate* half of the name and the reader's eye supplies the *crawl* half from the word itself. Use A wherever two lines fit. **1 × 20.**

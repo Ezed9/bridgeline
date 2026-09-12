@@ -14,11 +14,11 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from crawlgate.fetch import HttpResponse
-from crawlgate.guard import NullGuard, build
-from crawlgate.tools import build_tools
-from crawlgate.trace import TraceWriter
-from crawlgate.types import CrawlScope
+from bridgeline.fetch import HttpResponse
+from bridgeline.guard import NullGuard, build
+from bridgeline.tools import build_tools
+from bridgeline.trace import TraceWriter
+from bridgeline.types import CrawlScope
 
 GOOD_HOST = "docs.example.test"
 EVIL_HOST = "attacker.test"
@@ -122,8 +122,8 @@ def good_scope(**overrides) -> CrawlScope:
 def run_plan(plan, tools, workspace: Path, trace: TraceWriter, http: RecordingHttp,
              extractor=None, guard=None, approve: str = "never"):
     """Execute a plan with the recording client and the fake resolver."""
-    from crawlgate.extractor import AdversarialExtractor
-    from crawlgate.runtime import execute
+    from bridgeline.extractor import AdversarialExtractor
+    from bridgeline.runtime import execute
 
     return execute(
         plan,

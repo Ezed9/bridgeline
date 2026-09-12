@@ -16,12 +16,12 @@ import pytest
 from conftest import GOOD_HOST, good_scope
 from rich.console import Console
 
-from crawlgate.types import Plan, SlotRef, Step
-from crawlgate.ui import render, theme
-from crawlgate.ui.render import RenderingTraceWriter
-from crawlgate.ui.session import render_plan
+from bridgeline.types import Plan, SlotRef, Step
+from bridgeline.ui import render, theme
+from bridgeline.ui.render import RenderingTraceWriter
+from bridgeline.ui.session import render_plan
 
-SRC = Path(__file__).resolve().parents[1] / "src" / "crawlgate"
+SRC = Path(__file__).resolve().parents[1] / "src" / "bridgeline"
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 SECURITY_MODULES = (
@@ -64,7 +64,7 @@ def test_a_redirected_stream_gets_no_mascot(tmp_path) -> None:
     writer = RenderingTraceWriter(tmp_path / "t.jsonl", "r", console)
     writer.banner("0.1.0")
     assert "(oo)" not in buf.getvalue()
-    assert "crawlgate" in buf.getvalue()
+    assert "bridgeline" in buf.getvalue()
 
 
 def test_a_terminal_gets_the_braced_spider_on_a_refusal(tmp_path) -> None:

@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 from conftest import EVIL_HOST, GOOD_HOST, fake_resolver, good_scope
 
-from crawlgate import netpolicy
-from crawlgate.types import CrawlScope
+from bridgeline import netpolicy
+from bridgeline.types import CrawlScope
 
 
 def reject(url: str, scope: CrawlScope | None = None, resolver=fake_resolver) -> str | None:
@@ -135,7 +135,7 @@ def test_defang_neutralises_auto_fetching_renderers() -> None:
 def test_scope_regex_matches_in_scope_and_rejects_out_of_scope() -> None:
     import re
 
-    from crawlgate.types import Plan, Step
+    from bridgeline.types import Plan, Step
 
     plan = Plan(steps=(Step(tool="fetch", args={"url": "x"}, scope=good_scope()),))
     pattern = netpolicy.scope_regex(plan)
@@ -147,7 +147,7 @@ def test_scope_regex_matches_in_scope_and_rejects_out_of_scope() -> None:
 def test_scope_regex_with_no_fetch_scope_matches_nothing() -> None:
     import re
 
-    from crawlgate.types import Plan, Step
+    from bridgeline.types import Plan, Step
 
     plan = Plan(steps=(Step(tool="report", args={"summary": "x"}),))
     assert not re.fullmatch(netpolicy.scope_regex(plan), f"https://{GOOD_HOST}/docs/x")

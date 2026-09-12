@@ -1,4 +1,4 @@
-"""crawlgate CLI."""
+"""bridgeline CLI."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from .ui.render import RenderingTraceWriter
 
 
 def _run_dir(workspace: Path, run_id: str) -> Path:
-    return workspace / ".crawlgate" / "runs" / run_id
+    return workspace / ".bridgeline" / "runs" / run_id
 
 
 def _allow_loopback(plan: Plan) -> Plan:
@@ -54,7 +54,7 @@ def _provider_failure(err: Console, exc: ProviderError, run_dir: Path, fetched: 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="crawlgate",
+        prog="bridgeline",
         description="Crawl the web under a plan-fixed scope, where page content "
                     "structurally cannot become an instruction.",
     )
@@ -85,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.instruction and not args.plan:
         raise SystemExit("give an instruction or --plan")
 
-    # Chrome to stderr, answer to stdout: `crawlgate ... > out.md` stays clean.
+    # Chrome to stderr, answer to stdout: `bridgeline ... > out.md` stays clean.
     err = Console(stderr=True, highlight=False,
                   no_color=args.no_color or not theme.color_enabled(sys.stderr))
     interactive = not args.yes and sys.stdin.isatty() and sys.stderr.isatty()

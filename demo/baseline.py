@@ -3,7 +3,7 @@
 This is the control. It is shaped like an ordinary tool-calling loop: fetch a
 page, put the page text back into the model's context, let the model decide what
 to do next. That single re-feed is the whole vulnerability, and it is what
-crawlgate's plan-then-execute structure removes.
+bridgeline's plan-then-execute structure removes.
 
 The "model" here is a deterministic `GullibleModel` rather than a live LLM. That
 is deliberate: it needs no API key, it is reproducible, and it models the worst
