@@ -93,11 +93,20 @@ def _parse_step(raw: object, index: int) -> Step:
         if not isinstance(declared, str) or not schema_mod.is_known(declared):
             raise PlanError(f"{where}: extract needs a known schema, got {declared!r}")
 
+    # `out` and `when` are typed `str | None`, and everything downstream relies
+    # on that -- `declared.add(step.out)` and `step.when.split("==")`. A plan is
+    # an input, so the annotation guarantees nothing here. A planner reaching for
+    # a structured `when` is a schema-targeting failure to report, not a crash.
+    for field in ("out", "when"):
+        value = raw.get(field)
+        if value is not None and not isinstance(value, str):
+            raise PlanError(f"{where}: `{field}` must be a string, got {type(value).__name__}")
+
     return Step(
         tool=tool,
         args=args,
-        out=raw["out"] if raw.get("out") is not None else None,
-        when=raw["when"] if raw.get("when") is not None else None,
+        out=raw.get("out"),
+        when=raw.get("when"),
         scope=scope,
         allow_tainted_sink=bool(raw.get("allow_tainted_sink", False)),
     )

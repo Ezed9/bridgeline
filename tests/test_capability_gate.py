@@ -127,6 +127,30 @@ def test_plan_parsing_is_fail_closed() -> None:
             loads(bad)
 
 
+def test_a_non_string_out_or_when_is_refused_rather_than_crashing() -> None:
+    """`out` and `when` are declared `str | None`, but a model-emitted plan never
+    passed through the type checker. A planner reaching for a STRUCTURED `when`
+    is the shape K5 caught a live Gemini trying, and it must be rejected by name
+    -- never a raw AttributeError, and never a silently non-string slot name.
+    """
+    seed = (
+        '{"tool": "fetch", "args": {"url": "https://x.test/d/"}, "out": "pages",'
+        ' "scope": {"allowed_hosts": ["x.test"], "path_prefix": "/d"}}'
+    )
+    report = '{"tool": "report", "args": {"summary": "x"}'
+    extract = ('{"tool": "extract", "args": {"from": {"$slot": "pages"},'
+               ' "query": "q", "schema": "string"}')
+    for tail in [
+        report + ', "when": {"slot": "pages", "equals": "ok"}}',
+        report + ', "when": ["pages", "==", "ok"]}',
+        report + ', "when": 5}',
+        extract + ', "out": {"name": "summary"}}',
+        extract + ', "out": 7}',
+    ]:
+        with pytest.raises(PlanError, match="must be a string"):
+            loads(f'{{"steps": [{seed}, {tail}]}}')
+
+
 def test_a_scope_may_never_reference_a_slot() -> None:
     with pytest.raises(PlanError, match="may not reference a slot"):
         loads(
