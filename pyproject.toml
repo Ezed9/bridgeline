@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
-    "mcp-bouncer>=0.1.0",
+    "bouncer-core>=0.1.1",
     "httpx>=0.27",
     "selectolax>=0.3.21",
     "rich>=13.7",
@@ -26,7 +26,7 @@ Issues = "https://github.com/Ezed9/bridgeline/issues"
 bridgeline = "bridgeline.cli:main"
 
 [tool.uv.sources]
-mcp-bouncer = { path = "../Fable/bouncer", editable = true }
+bouncer-core = { path = "../mcp-bouncer", editable = true }
 
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]
