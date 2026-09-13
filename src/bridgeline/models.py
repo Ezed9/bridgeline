@@ -47,9 +47,12 @@ _SDK: dict[str, str] = {
     PROFILE_ANTHROPIC: "anthropic",
     PROFILE_GEMINI: "google.genai",
 }
+# Most people who hit this installed the package, where `uv sync --extra` means
+# nothing; the clone form is kept second for contributors.
 _INSTALL_HINT: dict[str, str] = {
-    PROFILE_ANTHROPIC: "uv sync --extra anthropic",
-    PROFILE_GEMINI: "uv sync --extra gemini",
+    PROFILE_ANTHROPIC: "pip install 'bridgeline[anthropic]'"
+                       " (in a clone: uv sync --extra anthropic)",
+    PROFILE_GEMINI: "pip install 'bridgeline[gemini]' (in a clone: uv sync --extra gemini)",
 }
 
 

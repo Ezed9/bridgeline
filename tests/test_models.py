@@ -31,6 +31,18 @@ def test_a_stranded_key_is_announced_never_silently_ignored(monkeypatch) -> None
     assert "SDK missing" in note and "uv sync --extra anthropic" in note
 
 
+def test_the_sdk_hint_works_for_someone_who_installed_the_package(monkeypatch) -> None:
+    """`uv sync --extra` only means something inside a clone. Most people who hit
+    this installed bridgeline from PyPI, so the hint must give them a command that
+    works where they are -- the error and the stranded-key note alike."""
+    monkeypatch.setattr(models, "sdk_installed", lambda p: p != models.PROFILE_ANTHROPIC)
+    want = "pip install 'bridgeline[anthropic]'"
+    assert want in models.resolve({"ANTHROPIC_API_KEY": "x"}).note
+    with pytest.raises(RuntimeError) as err:
+        models.resolve({}, override="anthropic").planner()
+    assert want in str(err.value)
+
+
 def test_the_usable_provider_wins_when_another_key_is_stranded(monkeypatch) -> None:
     monkeypatch.setattr(models, "sdk_installed", lambda p: p != models.PROFILE_ANTHROPIC)
     tiers = models.resolve({"ANTHROPIC_API_KEY": "x", "GOOGLE_API_KEY": "y"})
