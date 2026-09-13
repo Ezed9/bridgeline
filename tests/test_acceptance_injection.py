@@ -23,7 +23,7 @@ from bridgeline.runtime import execute
 from bridgeline.tools import build_tools
 from bridgeline.trace import TraceWriter
 from bridgeline.types import Trusted
-from demo.attacks import ATTACKS, Attack
+from bridgeline.verify.attacks import ATTACKS, Attack
 
 ATTACKER_MARKERS = ("attacker", "attackеr", "att​acker")
 
@@ -125,10 +125,27 @@ def test_the_corpus_actually_has_teeth() -> None:
     """S2: an undefended agent must be hijacked by these pages, or the suite
     proves nothing. Modelled as the baseline's own behaviour: it reads the page
     and does what the page says."""
-    from demo.baseline import run_undefended
+    from bridgeline.verify.baseline import run_undefended
 
     hijacked = [a.name for a in ATTACKS if run_undefended(a).hijacked]
     assert len(hijacked) >= 6, (
         f"only {len(hijacked)}/{len(ATTACKS)} hijacked an undefended agent: "
         "the corpus is too weak to prove anything"
     )
+
+
+def test_verify_ships_the_claim_as_a_command(capsys) -> None:
+    """`bridgeline verify` is the suite a stranger can run without cloning: every
+    attack, three arms, no key, no network, and an exit code that is the verdict.
+    It must pass today, name the corpus's provenance, and write the table to
+    stdout so `bridgeline verify > results.txt` captures the answer."""
+    from bridgeline.cli import main
+
+    assert main(["verify"]) == 0
+    out = capsys.readouterr().out
+    assert "undefended  bridgeline  layer-1-only" in out
+    assert f"bridgeline leaks     : 0/{len(ATTACKS)}" in out
+    for attack in ATTACKS:
+        assert attack.name in out
+    assert "SPEC.md" in out and "never read" in out
+

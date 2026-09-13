@@ -57,6 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="bridgeline",
         description="Crawl the web under a plan-fixed scope, where page content "
                     "structurally cannot become an instruction.",
+        epilog="bridgeline verify   run the attack corpus offline; exit code is the verdict",
     )
     parser.add_argument("instruction", nargs="?", help="the trusted task")
     parser.add_argument("--plan", type=Path, help="run a plan JSON file instead of planning")
@@ -80,6 +81,15 @@ def main(argv: list[str] | None = None) -> int:
     # Keys come from the environment, or from a .env found by walking up from
     # the working directory. A real environment variable always wins, so a
     # stale .env can never silently override an explicit export.
+    argv = sys.argv[1:] if argv is None else argv
+    # `verify` is dispatched ahead of argparse: the instruction is a free-text
+    # positional, so a subparser would swallow every task that begins "verify".
+    # It needs no keys, so it runs before .env is even read.
+    if argv == ["verify"]:
+        from .verify import run
+
+        return run()
+
     load_dotenv(override=False)
     args = build_parser().parse_args(argv)
     if not args.instruction and not args.plan:

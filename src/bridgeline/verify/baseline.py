@@ -20,7 +20,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from urllib.parse import urljoin
 
-from demo.attacks import Attack
+from .attacks import Attack
 
 _URL = re.compile(r"https?://[^\s\"'<>)\]]+", re.IGNORECASE)
 _ABS_PATH = re.compile(r"(?<![\w/])/(?:etc|tmp|var|root|home)/[\w./-]+")
@@ -108,7 +108,7 @@ def run_undefended(attack: Attack, max_steps: int = 6) -> BaselineResult:
 
 
 if __name__ == "__main__":
-    from demo.attacks import ATTACKS
+    from .attacks import ATTACKS
 
     for attack in ATTACKS:
         outcome = run_undefended(attack)
