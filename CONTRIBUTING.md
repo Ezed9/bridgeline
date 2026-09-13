@@ -6,11 +6,9 @@ Small, well-tested PRs are far easier to accept than large ones.
 
 ## Development setup
 
-bridgeline uses [uv](https://docs.astral.sh/uv/). Until `bouncer-core` is
-published, it is resolved from a sibling checkout, so clone both side by side:
+bridgeline uses [uv](https://docs.astral.sh/uv/). From a clone:
 
 ```bash
-git clone https://github.com/Ezed9/mcp-bouncer
 git clone https://github.com/Ezed9/bridgeline && cd bridgeline
 uv sync --extra dev
 uv run pytest -q

@@ -49,23 +49,13 @@ wheels = [
 [[package]]
 name = "bouncer-core"
 version = "0.1.1"
-source = { editable = "../mcp-bouncer" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyyaml" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "agentdojo", marker = "extra == 'benchmark'", specifier = ">=0.1.35" },
-    { name = "pyyaml", specifier = ">=6.0" },
-]
-provides-extras = ["benchmark"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest", specifier = ">=8" },
-    { name = "pytest-asyncio", specifier = ">=0.24" },
-    { name = "ruff", specifier = ">=0.6" },
+sdist = { url = "https://files.pythonhosted.org/packages/64/74/282accdac09a925c77fa6a252ce4d3dede35629ea1413dd526f445f75283/bouncer_core-0.1.1.tar.gz", hash = "sha256:cd55b552eab8ae0978398bde8877c391965c8a8020f7512a56680b432f13ab02", size = 552774, upload-time = "2026-09-13T06:02:14.828Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/98/29/fc2dcc3459a2341d2eaa491e689dd5240e36a88bb38c48e3129c8ff91281/bouncer_core-0.1.1-py3-none-any.whl", hash = "sha256:b5bd85cd8b9890a6ee94c0ce9f53945156e351503a9b445fd1b97f94ff7c553e", size = 22199, upload-time = "2026-09-13T06:02:13.26Z" },
 ]
 
 [[package]]
@@ -96,7 +86,7 @@ gemini = [
 [package.metadata]
 requires-dist = [
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.40" },
-    { name = "bouncer-core", editable = "../mcp-bouncer" },
+    { name = "bouncer-core", specifier = ">=0.1.1" },
     { name = "google-genai", marker = "extra == 'gemini'", specifier = ">=1.0" },
     { name = "httpx", specifier = ">=0.27" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },

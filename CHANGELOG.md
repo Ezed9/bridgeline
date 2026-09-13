@@ -6,6 +6,8 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-13
+
 ### Added
 - `bridgeline verify` — the sixteen-attack corpus as a command, runnable from an
   installed package with no API key and no network. The exit code is the verdict.

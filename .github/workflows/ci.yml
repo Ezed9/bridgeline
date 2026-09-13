@@ -15,26 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
-    defaults:
-      run:
-        working-directory: bridgeline
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          path: bridgeline
-
-      # Until bouncer-core is on PyPI, pyproject.toml resolves it from a sibling
-      # checkout at ../mcp-bouncer. Reproduce that layout exactly. Remove this
-      # step, and the [tool.uv.sources] entry, once it is published.
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          repository: Ezed9/mcp-bouncer
-          path: mcp-bouncer
 
       - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
         with:
           enable-cache: true
-          cache-dependency-glob: bridgeline/uv.lock
 
       - name: Install
         run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
@@ -50,12 +36,13 @@ jobs:
 
       # The two claims a stranger relies on, asserted against a real install
       # rather than the source tree: the built wheel verifies on its own, and it
-      # does not drag the MCP SDK in behind the contract engine.
+      # does not drag the MCP SDK in behind the contract engine. Every dependency,
+      # bouncer-core included, comes from PyPI -- exactly what `pip install` gets.
       - name: The installed wheel verifies, and pulls no MCP tree
         run: |
           uv build --wheel --out-dir dist
           uv venv "$RUNNER_TEMP/stranger" --python ${{ matrix.python-version }}
-          VIRTUAL_ENV="$RUNNER_TEMP/stranger" uv pip install dist/*.whl ../mcp-bouncer
+          VIRTUAL_ENV="$RUNNER_TEMP/stranger" uv pip install dist/*.whl
           VIRTUAL_ENV="$RUNNER_TEMP/stranger" uv pip list | tee "$RUNNER_TEMP/installed.txt"
           if grep -qiE '^(mcp|mcp-bouncer|uvicorn|starlette|pydantic|pyjwt|opentelemetry-api)[[:space:]]' "$RUNNER_TEMP/installed.txt"; then
             echo "::error::the installed package pulled a dependency the bouncer-core split removed"
