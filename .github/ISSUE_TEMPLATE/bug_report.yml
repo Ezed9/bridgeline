@@ -1,0 +1,35 @@
+name: Bug report
+description: Something does not work as documented. For a security flaw, use the advisory link instead.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Committed plan
+      description: The output of the same command with `--dry-run`, if a plan was involved.
+      render: json
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      description: "`bridgeline --help` banner version, Python version, OS"
+    validations:
+      required: true
+  - type: dropdown
+    id: models
+    attributes:
+      label: Model configuration
+      options:
+        - "--models none (no API key)"
+        - Anthropic
+        - Gemini
+        - Anthropic and Gemini
+    validations:
+      required: true

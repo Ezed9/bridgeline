@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest a capability. Say what it would cost the invariant, if anything.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do that bridgeline does not let you do?
+    validations:
+      required: true
+  - type: textarea
+    id: invariant
+    attributes:
+      label: Effect on the invariant
+      description: Would this let page content influence a tool, a destination, or a call's shape? If you are not sure, say so.
