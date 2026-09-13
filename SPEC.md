@@ -3,10 +3,15 @@
 **Status: pre-registered. Written and committed before `src/` exists.**
 
 > **2026-09-12.** The project was renamed `crawlgate` -> `bridgeline` after
-> these results were measured. This file is preserved verbatim as
-> pre-registered: the old name is left in place throughout, and **no success
-> or kill criterion has been altered.** `git log -p SPEC.md` shows this note
-> is the only change since the pre-registration commit.
+> these results were measured. The old name is left in place throughout,
+> deliberately, and this note is the only change made for the rename.
+>
+> This file has been amended once since pre-registration: on 2026-09-06, in
+> `19c057d`, which narrowed the §2 invariant after review found it overclaimed,
+> restated S2's threshold to hold for a corpus of any size, and documented two
+> mechanisms found during implementation. That commit's message records why.
+> `git log -p SPEC.md` shows exactly what changed.
+
 Success *and* kill criteria below are fixed now, so a negative result is
 reportable rather than embarrassing.
 

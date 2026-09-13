@@ -208,6 +208,13 @@ The single permitted change is one dated note appended to the header:
 The diff then proves the edit changed nothing substantive. No occurrence of
 "crawlgate" inside the body is touched.
 
+> **Correction, 2026-09-13.** This section assumed `SPEC.md` was unmodified since
+> pre-registration. It was not: `19c057d` (2026-09-06) had already amended it,
+> narrowing the §2 invariant and restating S2. The rename note as first
+> committed repeated the false assumption and was corrected to name that
+> amendment. The rule stands — nothing is edited *for the rename* — but the file
+> was never verbatim.
+
 ### 6.3 Repository cleanup
 
 - Delete `docs/archive/forgeiq_guide/` — 44K of scaffold from an abandoned
@@ -429,8 +436,8 @@ proceed in the bouncer repository while Phase 0 happens here.
 3. CI is green on 3.12, 3.13 and 3.14.
 4. `git log --reverse` in the published repository still shows the
    pre-registration commit preceding the first `src/` commit.
-5. `git log -p SPEC.md` shows exactly one post-pre-registration commit, adding
-   only the dated rename note.
+5. `git log -p SPEC.md` shows no change after `19c057d` — the one documented
+   correction, which predates this work — other than the dated rename note.
 6. `FINDINGS.md` reports K5 as evaluated at 13/15, with both failures named.
 7. A reader who has never seen the project can state, from the README alone,
    what configuration the security claim was measured in and why it matters.

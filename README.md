@@ -132,12 +132,13 @@ uv run pytest -q
 ```
 
 - [SPEC.md](SPEC.md) — the invariant and the success and kill criteria,
-  committed before any implementation existed
+  committed before any implementation existed, and corrected once in the open
 - [FINDINGS.md](FINDINGS.md) — results, the narrow claim, and what it costs
 - [docs/mascot-variants.md](docs/mascot-variants.md) — how the spider was chosen
 
 bridgeline was called **crawlgate** until 2026-09-12. `SPEC.md` still uses that
-name throughout, deliberately: it is a pre-registration, and it is kept exactly
-as it was committed.
+name throughout, deliberately: it is a pre-registration. It has been amended
+once, on 2026-09-06, to narrow an invariant that overclaimed — `git log -p
+SPEC.md` shows exactly what changed, and the commit message says why.
 
 Python 3.12+. MIT licensed.
